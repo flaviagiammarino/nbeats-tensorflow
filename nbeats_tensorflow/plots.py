@@ -74,7 +74,7 @@ def plot_results(df):
             name='Forecast',
             mode='lines',
             line=dict(
-                color='#38A6A5',
+                color='#1D6996',
                 width=1
             )
         )
@@ -89,7 +89,7 @@ def plot_results(df):
                 name='Backcast',
                 mode='lines',
                 line=dict(
-                    color='#E17C05',
+                    color='#94346E',
                     width=1
                 )
             )
@@ -99,3 +99,5 @@ def plot_results(df):
 
     return fig
 
+from palettable.cartocolors.qualitative import Prism_10
+Prism_10.hex_colors
