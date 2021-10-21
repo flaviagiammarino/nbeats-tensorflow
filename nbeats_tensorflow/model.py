@@ -114,7 +114,7 @@ class NBeats():
         Parameters:
         __________________________________
         loss: str.
-            Loss function. One of:
+            Loss function, one of:
              - 'mse': mean squared error,
              - 'mae': mean absolute error,
              - 'mape': mean absolute percentage error,
@@ -252,7 +252,7 @@ def get_block_output(stack_type,
                      share_coefficients):
 
     '''
-    Get a given block's backcasts and forecasts.
+    Get a given block's backcast and forecast.
 
     Parameters:
     __________________________________
@@ -353,11 +353,11 @@ def build_model_graph(backcast_time_idx,
         stack types (either 'trend', 'seasonality' or 'generic').
 
     num_blocks_per_stack: int.
-        The number of blocks in each stack. The default is 3.
+        The number of blocks in each stack.
 
     share_weights: bool.
         True if the weights of the 4 layers of the fully connected stack should be shared by the different
-        blocks inside the same stack, False otherwise. The default is True.
+        blocks inside the same stack, False otherwise.
 
     share_coefficients: bool.
         True if the forecasts and backcasts of each block should share the same basis expansion coefficients,

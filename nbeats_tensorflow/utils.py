@@ -143,7 +143,7 @@ def get_loss_function(loss, alpha):
     Parameters:
     __________________________________
     loss: str
-        One of:
+        Loss type, one of:
          - 'mse': mean squared error,
          - 'mae': mean absolute error,
          - 'mape': mean absolute percentage error,

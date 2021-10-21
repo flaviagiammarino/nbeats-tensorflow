@@ -3,7 +3,7 @@ import plotly.graph_objects as go
 def plot_results(df):
 
     '''
-    Plot the in-sample predictions or out-of-sample forecasts.
+    Plot the actual and predicted values.
 
     Parameters:
     __________________________________
@@ -98,6 +98,3 @@ def plot_results(df):
     fig = go.Figure(data=data, layout=layout)
 
     return fig
-
-from palettable.cartocolors.qualitative import Prism_10
-Prism_10.hex_colors

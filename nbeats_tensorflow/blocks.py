@@ -13,14 +13,14 @@ def trend_model(theta, t_, p):
     __________________________________
     theta: tf.Tensor
         Basis expansion coefficients, 2-dimensional tensor with shape (N, p) where N is the batch
-        size and p is the trend polynomial order.
+        size and p is the number of polynomial terms.
 
     t_: tf.Tensor
         Time index, 1-dimensional tensor with shape t for the trend backcasts or with shape H for
         the trend forecasts.
 
     p: int
-        Number polynomial terms.
+        Number of polynomial terms.
 
     Returns:
     __________________________________
@@ -92,7 +92,7 @@ def trend_block(h, p, t_b, t_f, share_theta):
         Note that all fully connected layers have the same number of units.
 
     p: int
-       Number polynomial terms.
+       Number of polynomial terms.
 
     t_b: tf.Tensor
         Input time index, 1-dimensional tensor with shape t used for generating the backcasts.
