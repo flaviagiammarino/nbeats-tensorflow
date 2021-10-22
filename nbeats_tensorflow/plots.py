@@ -74,7 +74,7 @@ def plot_results(df):
             name='Forecast',
             mode='lines',
             line=dict(
-                color='#1D6996',
+                color='#0550ae',
                 width=1
             )
         )
@@ -89,7 +89,7 @@ def plot_results(df):
                 name='Backcast',
                 mode='lines',
                 line=dict(
-                    color='#94346E',
+                    color='#8250df',
                     width=1
                 )
             )

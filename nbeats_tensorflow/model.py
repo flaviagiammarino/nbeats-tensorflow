@@ -67,7 +67,7 @@ class NBeats():
 
         share_coefficients: bool.
             True if the forecasts and backcasts of each block should share the same basis expansion coefficients,
-            False otherwise. The default is False.
+            False otherwise. The default is True.
         '''
 
         # Cast the data to numpy array.
@@ -119,6 +119,7 @@ class NBeats():
              - 'mae': mean absolute error,
              - 'mape': mean absolute percentage error,
              - 'smape': symmetric mean absolute percentage error.
+            The default is 'mse'.
 
         learning_rate: float.
             Learning rate, the default is 0.01.
@@ -440,4 +441,4 @@ def build_model_graph(backcast_time_idx,
 
 class callback(Callback):
     def on_epoch_end(self, epoch, logs=None):
-        print('epoch: {}, loss: {:,.4f}, val_loss: {:,.4f}'.format(epoch, logs['loss'], logs['val_loss']))
+        print('epoch: {}, loss: {:,.4f}, val_loss: {:,.4f}'.format(1 + epoch, logs['loss'], logs['val_loss']))

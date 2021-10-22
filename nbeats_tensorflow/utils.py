@@ -159,42 +159,47 @@ def get_loss_function(loss, alpha):
         both of which are of type tf.Tensor.
     '''
 
-    if loss == 'mse':
-
-        def loss_fun(y_true, y_pred):
-            backcast_loss = tf.reduce_mean((y_true[0] - y_pred[0]) ** 2)
-            forecast_loss = tf.reduce_mean((y_true[1] - y_pred[1]) ** 2)
-            return alpha * backcast_loss + (1 - alpha) * forecast_loss
-
-        return loss_fun
-
-    elif loss == 'mae':
-
-        def loss_fun(y_true, y_pred):
-            backcast_loss = tf.reduce_mean(tf.math.abs(y_true[0] - y_pred[0]))
-            forecast_loss = tf.reduce_mean(tf.math.abs(y_true[1] - y_pred[1]))
-            return alpha * backcast_loss + (1 - alpha) * forecast_loss
-
-        return loss_fun
-
-    elif loss == 'mape':
-
-        def loss_fun(y_true, y_pred):
-            backcast_loss = tf.reduce_mean(tf.math.abs((y_true[0] - y_pred[0]) / y_true[0]))
-            forecast_loss = tf.reduce_mean(tf.math.abs((y_true[1] - y_pred[1]) / y_true[1]))
-            return alpha * backcast_loss + (1 - alpha) * forecast_loss
-
-        return loss_fun
-
-    elif loss == 'smape':
-
-        def loss_fun(y_true, y_pred):
-            backcast_loss = 2 * tf.reduce_mean(tf.math.abs((y_true[0] - y_pred[0]) / (y_true[0] + y_pred[0])))
-            forecast_loss = 2 * tf.reduce_mean(tf.math.abs((y_true[1] - y_pred[1]) / (y_true[1] + y_pred[1])))
-            return alpha * backcast_loss + (1 - alpha) * forecast_loss
-
-        return loss_fun
+    if alpha < 0 or alpha > 1:
+        raise ValueError('The backcast loss weight mus be between zero and one.')
 
     else:
 
-        raise ValueError('Undefined loss function {}'.format(loss))
+        if loss == 'mse':
+
+            def loss_fun(y_true, y_pred):
+                backcast_loss = tf.reduce_mean((y_true[0] - y_pred[0]) ** 2)
+                forecast_loss = tf.reduce_mean((y_true[1] - y_pred[1]) ** 2)
+                return alpha * backcast_loss + (1 - alpha) * forecast_loss
+
+            return loss_fun
+
+        elif loss == 'mae':
+
+            def loss_fun(y_true, y_pred):
+                backcast_loss = tf.reduce_mean(tf.math.abs(y_true[0] - y_pred[0]))
+                forecast_loss = tf.reduce_mean(tf.math.abs(y_true[1] - y_pred[1]))
+                return alpha * backcast_loss + (1 - alpha) * forecast_loss
+
+            return loss_fun
+
+        elif loss == 'mape':
+
+            def loss_fun(y_true, y_pred):
+                backcast_loss = tf.reduce_mean(tf.math.abs((y_true[0] - y_pred[0]) / y_true[0]))
+                forecast_loss = tf.reduce_mean(tf.math.abs((y_true[1] - y_pred[1]) / y_true[1]))
+                return alpha * backcast_loss + (1 - alpha) * forecast_loss
+
+            return loss_fun
+
+        elif loss == 'smape':
+
+            def loss_fun(y_true, y_pred):
+                backcast_loss = 2 * tf.reduce_mean(tf.math.abs((y_true[0] - y_pred[0]) / (y_true[0] + y_pred[0])))
+                forecast_loss = 2 * tf.reduce_mean(tf.math.abs((y_true[1] - y_pred[1]) / (y_true[1] + y_pred[1])))
+                return alpha * backcast_loss + (1 - alpha) * forecast_loss
+
+            return loss_fun
+
+        else:
+
+            raise ValueError('Undefined loss function {}'.format(loss))
