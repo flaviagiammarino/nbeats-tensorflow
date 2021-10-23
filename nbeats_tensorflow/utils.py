@@ -160,7 +160,7 @@ def get_loss_function(loss, alpha):
     '''
 
     if alpha < 0 or alpha > 1:
-        raise ValueError('The backcast loss weight mus be between zero and one.')
+        raise ValueError('The backcast loss weight must be between zero and one.')
 
     else:
 
