@@ -15,9 +15,9 @@ class NBeats():
                  target,
                  forecast_period,
                  lookback_period,
-                 num_trend_coefficients=4,
+                 num_trend_coefficients=3,
                  num_seasonal_coefficients=5,
-                 num_generic_coefficients=6,
+                 num_generic_coefficients=7,
                  hidden_units=100,
                  stacks=['trend', 'seasonality'],
                  num_blocks_per_stack=3,
@@ -42,14 +42,14 @@ class NBeats():
 
         num_trend_coefficients: int.
             Number of basis expansion coefficients of the trend block. This is the number of polynomial terms
-            used for modelling the trend. The default is 4.
+            used for modelling the trend. The default is 3.
 
         num_seasonal_coefficients: int.
             Number of basis expansion coefficients of the seasonality block. This is the number of Fourier terms
             used for modelling the seasonality. The default is 5.
 
         num_generic_coefficients: int.
-            Number of basis expansion coefficients of the generic block. The default is 6.
+            Number of basis expansion coefficients of the generic block. The default is 7.
 
         hidden_units: int.
             Number of hidden units of each of the 4 layers of the fully connected stack. The default is 100.
@@ -436,7 +436,7 @@ def build_model_graph(backcast_time_idx,
                 backcast = Subtract()([backcast, backcast_block])
                 forecast = Add()([forecast, forecast_block])
 
-    return Model(x, [x, forecast])
+    return Model(x, [backcast, forecast])
 
 
 class callback(Callback):

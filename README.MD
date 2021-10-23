@@ -36,13 +36,19 @@ model = NBeats(
     lookback_period=400,
     hidden_units=30,
     stacks=['trend', 'seasonality'],
+    num_trend_coefficients=3,
+    num_seasonal_coefficients=5,
+    num_blocks_per_stack=2,
+    share_weights=True,
+    share_coefficients=False,
 )
 
 model.fit(
-    loss='smape',
+    loss='mse',
     epochs=100,
-    batch_size=64,
-    learning_rate=0.001
+    batch_size=32,
+    learning_rate=0.003,
+    backcast_loss_weight=0.5,
 )
 ```
 ```python
