@@ -6,7 +6,7 @@ from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.callbacks import Callback
 pd.options.mode.chained_assignment = None
 
-from nbeats_tensorflow.utils import cast_target_to_array, get_training_sequences, get_time_indices, get_loss_function
+from nbeats_tensorflow.utils import cast_target_to_array, get_training_sequences, get_time_indices
 from nbeats_tensorflow.blocks import trend_block, seasonality_block, generic_block
 
 class NBeats():
@@ -114,11 +114,7 @@ class NBeats():
         Parameters:
         __________________________________
         loss: str.
-            Loss function, one of:
-             - 'mse': mean squared error,
-             - 'mae': mean absolute error,
-             - 'mape': mean absolute percentage error,
-             - 'smape': symmetric mean absolute percentage error.
+            Loss function, see https://www.tensorflow.org/api_docs/python/tf/keras/losses.
             The default is 'mse'.
 
         learning_rate: float.
@@ -138,10 +134,14 @@ class NBeats():
             A weight of 0.5 means that forecast and backcast loss is weighted the same. The default is 0.5.
         '''
 
+        if backcast_loss_weight < 0 or backcast_loss_weight > 1:
+            raise ValueError('The backcast loss weight must be between zero and one.')
+
         # Compile the model.
         self.model.compile(
             optimizer=Adam(learning_rate=learning_rate),
-            loss=get_loss_function(loss, backcast_loss_weight)
+            loss=[loss, loss],
+            loss_weights=[backcast_loss_weight, 1 - backcast_loss_weight]
         )
 
         # Fit the model.
