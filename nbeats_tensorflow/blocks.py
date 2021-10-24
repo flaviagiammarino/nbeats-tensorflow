@@ -117,7 +117,7 @@ def trend_block(h, p, t_b, t_f, share_theta):
 
     if share_theta:
 
-        # If share_coefficients is True, use the same basis expansion
+        # If share_theta is True, use the same basis expansion
         # coefficients for backcasting and forecasting.
         theta = Dense(units=p, activation='linear', use_bias=False)(h)
 
@@ -128,7 +128,7 @@ def trend_block(h, p, t_b, t_f, share_theta):
 
     else:
 
-        # If share_coefficients is False, use different basis expansion
+        # If share_theta is False, use different basis expansion
         # coefficients for backcasting and forecasting.
         theta_b = Dense(units=p, activation='linear', use_bias=False)(h)
         theta_f = Dense(units=p, activation='linear', use_bias=False)(h)
@@ -180,7 +180,7 @@ def seasonality_block(h, p, t_b, t_f, share_theta):
 
     if share_theta:
 
-        # If share_coefficients is True, use the same basis expansion
+        # If share_theta is True, use the same basis expansion
         # coefficients for backcasting and forecasting.
         theta = Dense(units=2 * p, activation='linear', use_bias=False)(h)
 
@@ -191,7 +191,7 @@ def seasonality_block(h, p, t_b, t_f, share_theta):
 
     else:
 
-        # If share_coefficients is False, use different basis expansion
+        # If share_theta is False, use different basis expansion
         # coefficients for backcasting and forecasting.
         theta_b = Dense(units=2 * p, activation='linear', use_bias=False)(h)
         theta_f = Dense(units=2 * p, activation='linear', use_bias=False)(h)
@@ -243,7 +243,7 @@ def generic_block(h, p, t_b, t_f, share_theta):
 
     if share_theta:
 
-        # If share_coefficients is True, use the same basis expansion
+        # If share_theta is True, use the same basis expansion
         # coefficients for backcasting and forecasting.
         theta = Dense(units=p, activation='linear', use_bias=False)(h)
 
@@ -254,7 +254,7 @@ def generic_block(h, p, t_b, t_f, share_theta):
 
     else:
 
-        # If share_coefficients is False, use different basis expansion
+        # If share_theta is False, use different basis expansion
         # coefficients for backcasting and forecasting.
         theta_b = Dense(units=p, activation='linear', use_bias=False)(h)
         theta_f = Dense(units=p, activation='linear', use_bias=False)(h)
