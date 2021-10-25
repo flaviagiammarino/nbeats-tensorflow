@@ -90,7 +90,7 @@ class NBeats():
         # Extract the time indices of the input and output sequences.
         backcast_time_idx, forecast_time_idx = get_time_indices(lookback_period, forecast_period)
 
-        # Build the model graph
+        # Build the model graph.
         self.model = build_model_graph(
             backcast_time_idx,
             forecast_time_idx,
@@ -183,12 +183,12 @@ class NBeats():
         elif index > len(self.y) - self.forecast_period:
             raise ValueError('The index must be less than {}.'.format(len(self.y) - self.forecast_period))
 
-        # Extract the predictions for the selected sequence
+        # Extract the predictions for the selected sequence.
         backcast, forecast = self.model.predict(self.X)
         backcast = self.y_min + (self.y_max - self.y_min) * backcast[index - self.lookback_period, :].flatten()
         forecast = self.y_min + (self.y_max - self.y_min) * forecast[index - self.lookback_period, :].flatten()
 
-        # Organize the predictions in a data frame
+        # Organize the predictions in a data frame.
         predictions = pd.DataFrame(columns=['time_idx', 'actual', 'forecast'])
         predictions['time_idx'] = np.arange(len(self.y))
         predictions['actual'] = self.y_min + (self.y_max - self.y_min) * self.y
@@ -200,10 +200,7 @@ class NBeats():
 
         predictions = predictions.astype(float)
 
-        # Save the data frame
-        self.predictions = predictions
-
-        # Return the data frame
+        # Return the data frame.
         return predictions
 
     def forecast(self, return_backcast=False):
@@ -222,12 +219,12 @@ class NBeats():
             Data frame including the actual and predicted values of the time series.
         '''
 
-        # Generate the forecasts
+        # Generate the forecasts.
         backcast, forecast = self.model.predict(self.y[- self.lookback_period:].reshape(1, - 1))
         backcast = self.y_min + (self.y_max - self.y_min) * backcast[- 1, :].flatten()
         forecast = self.y_min + (self.y_max - self.y_min) * forecast[- 1, :].flatten()
 
-        # Organize the forecasts in a data frame
+        # Organize the forecasts in a data frame.
         forecasts = pd.DataFrame(columns=['time_idx', 'actual', 'forecast'])
         forecasts['time_idx'] = np.arange(len(self.y) + self.forecast_period)
         forecasts['actual'].iloc[: - self.forecast_period] = self.y_min + (self.y_max - self.y_min) * self.y
@@ -239,10 +236,7 @@ class NBeats():
 
         forecasts = forecasts.astype(float)
 
-        # Save the data frame
-        self.forecasts = forecasts
-
-        # Return the data frame
+        # Return the data frame.
         return forecasts
 
 
@@ -389,7 +383,7 @@ def build_model_graph(backcast_time_idx,
             if s == 0 and b == 0:
 
                 # For the first block of the first stack, forward pass the
-                # input tensor directly through the 4 fully connected layers.
+                # input directly through the 4 fully connected layers.
                 if share_weights:
 
                     h = d1(x)
@@ -415,7 +409,7 @@ def build_model_graph(backcast_time_idx,
                     num_generic_coefficients=num_generic_coefficients,
                     share_coefficients=share_coefficients)
 
-                # Calculate the backcast residuals by subtracting the block backcast from the input.
+                # Calculate the backcast residual by subtracting the block backcast from the input.
                 # See Section 3.2 in the N-BEATS paper.
                 backcast = Subtract()([x, backcast_block])
 
@@ -425,7 +419,7 @@ def build_model_graph(backcast_time_idx,
             else:
 
                 # For the subsequent blocks and stacks, forward pass the
-                # backcast residuals through the 4 fully connected layers.
+                # backcast residual through the 4 fully connected layers.
                 if share_weights:
 
                     h = d1(backcast)
