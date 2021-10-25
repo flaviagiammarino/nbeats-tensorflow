@@ -42,14 +42,17 @@ class NBeats():
 
         num_trend_coefficients: int.
             Number of basis expansion coefficients of the trend block. This is the number of polynomial terms
-            used for modelling the trend. The default is 3.
+            used for modelling the trend. This parameter is only used when the model includes a trend stack.
+            The default is 3.
 
         num_seasonal_coefficients: int.
             Number of basis expansion coefficients of the seasonality block. This is the number of Fourier terms
-            used for modelling the seasonality. The default is 5.
+            used for modelling the seasonality. This parameter is only used when the model includes a seasonality
+            stack. The default is 5.
 
         num_generic_coefficients: int.
-            Number of basis expansion coefficients of the generic block. The default is 7.
+            Number of basis expansion coefficients of the generic block. This parameter is only used when the
+            model includes a generic stack. The default is 7.
 
         hidden_units: int.
             Number of hidden units of each of the 4 layers of the fully connected stack. The default is 100.
@@ -66,7 +69,7 @@ class NBeats():
             blocks inside the same stack, False otherwise. The default is True.
 
         share_coefficients: bool.
-            True if the forecasts and backcasts of each block should share the same basis expansion coefficients,
+            True if the forecast and backcast of each block should share the same basis expansion coefficients,
             False otherwise. The default is True.
         '''
 
@@ -113,7 +116,7 @@ class NBeats():
 
         Parameters:
         __________________________________
-        loss: str.
+        loss: str, tf.function.
             Loss function, see https://www.tensorflow.org/api_docs/python/tf/keras/losses.
             The default is 'mse'.
 
@@ -130,8 +133,8 @@ class NBeats():
             Fraction of the training data to be used as validation data, must be between 0 and 1. The default is 0.2.
 
         backcast_loss_weight: float.
-            Weight of backcast in comparison to forecast when calculating the loss, must be between 0 and 1.
-            A weight of 0.5 means that forecast and backcast loss is weighted the same. The default is 0.5.
+            Weight of backcast in comparison to forecast when calculating the loss, must be between 0 and 1. A weight
+            of 0.5 means that forecast and backcast loss is weighted the same. The default is 0.5.
         '''
 
         if backcast_loss_weight < 0 or backcast_loss_weight > 1:
@@ -253,7 +256,7 @@ def get_block_output(stack_type,
                      share_coefficients):
 
     '''
-    Get a given block's backcast and forecast.
+    Generate the block backcast and forecast.
 
     Parameters:
     __________________________________
@@ -266,25 +269,24 @@ def get_block_output(stack_type,
         Note that all fully connected layers have the same number of units.
 
     backcast_time_idx: tf.Tensor
-        Input time index, 1-dimensional tensor with shape t used for generating the backcasts.
+        Input time index, 1-dimensional tensor with shape t used for generating the backcast.
 
     forecast_time_idx: tf.Tensor
-        Output time index, 1-dimensional tensor with shape H used for generating the forecasts.
+        Output time index, 1-dimensional tensor with shape H used for generating the forecast.
 
     num_trend_coefficients: int.
-        Number of basis expansion coefficients of the trend block. This is the number of polynomial terms
-        used for modelling the trend.
+        Number of basis expansion coefficients of the trend block. This is the number of polynomial terms used for
+        modelling the trend.
 
     num_seasonal_coefficients: int.
-        Number of basis expansion coefficients of the seasonality block. This is the number of Fourier terms
-        used for modelling the seasonality.
+        Number of basis expansion coefficients of the seasonality block. This is the number of Fourier terms used
+        for modelling the seasonality.
 
     num_generic_coefficients: int.
         Number of basis expansion coefficients of the generic block.
 
     share_coefficients: bool.
-        True if the forecasts and backcasts of each block should share the same basis expansion coefficients,
-        False otherwise.
+        True if the block forecast and backcast should share the same basis expansion coefficients, False otherwise.
     '''
 
     if stack_type == 'trend':
@@ -327,7 +329,7 @@ def build_model_graph(backcast_time_idx,
                       share_coefficients):
 
     '''
-    Build the model's graph.
+    Build the model graph.
 
     Parameters:
     __________________________________
@@ -347,28 +349,33 @@ def build_model_graph(backcast_time_idx,
         Number of basis expansion coefficients of the generic block, corresponds to the number of linear terms.
 
     hidden_units: int.
-        Number of hidden units of each of the 4 layers of the fully connected stack.
+        Number of hidden units of each of the 4 layers of the fully connected stack. Note that all fully connected
+        layers have the same number of units.
 
     stacks: list of strings.
-        The length of the list is the number of stacks, the items in the list are strings identifying the
-        stack types (either 'trend', 'seasonality' or 'generic').
+        The length of the list is the number of stacks, the items in the list are strings identifying the stack
+        types (either 'trend', 'seasonality' or 'generic').
 
     num_blocks_per_stack: int.
         The number of blocks in each stack.
 
     share_weights: bool.
-        True if the weights of the 4 layers of the fully connected stack should be shared by the different
-        blocks inside the same stack, False otherwise.
+        True if the weights of the 4 layers of the fully connected stack should be shared by the different blocks
+        inside the same stack, False otherwise.
 
     share_coefficients: bool.
-        True if the forecasts and backcasts of each block should share the same basis expansion coefficients,
-        False otherwise.
+        True if the block forecast and backcast should share the same basis expansion coefficients, False otherwise.
     '''
 
+    # Define the model input, the input shape is
+    # equal to the length of the lookback period.
     x = Input(shape=len(backcast_time_idx))
 
+    # Loop across the different stacks.
     for s in range(len(stacks)):
 
+        # If share_weights is true, use the same 4 fully connected
+        # layers across all blocks in the stack.
         if share_weights:
 
             d1 = Dense(units=hidden_units, activation='relu')
@@ -376,10 +383,13 @@ def build_model_graph(backcast_time_idx,
             d3 = Dense(units=hidden_units, activation='relu')
             d4 = Dense(units=hidden_units, activation='relu')
 
+        # Loop across the different blocks in the stack.
         for b in range(num_blocks_per_stack):
 
             if s == 0 and b == 0:
 
+                # For the first block of the first stack, forward pass the
+                # input tensor directly through the 4 fully connected layers.
                 if share_weights:
 
                     h = d1(x)
@@ -394,6 +404,7 @@ def build_model_graph(backcast_time_idx,
                     h = Dense(units=hidden_units, activation='relu')(h)
                     h = Dense(units=hidden_units, activation='relu')(h)
 
+                # Generate the block backcast and forecast.
                 backcast_block, forecast_block = get_block_output(
                     stack_type=stacks[s],
                     dense_layers_output=h,
@@ -404,11 +415,17 @@ def build_model_graph(backcast_time_idx,
                     num_generic_coefficients=num_generic_coefficients,
                     share_coefficients=share_coefficients)
 
+                # Calculate the backcast residuals by subtracting the block backcast from the input.
+                # See Section 3.2 in the N-BEATS paper.
                 backcast = Subtract()([x, backcast_block])
+
+                # For the first block of the first stack, no adjustment is made to the forecast.
                 forecast = forecast_block
 
             else:
 
+                # For the subsequent blocks and stacks, forward pass the
+                # backcast residuals through the 4 fully connected layers.
                 if share_weights:
 
                     h = d1(backcast)
@@ -423,6 +440,7 @@ def build_model_graph(backcast_time_idx,
                     h = Dense(units=hidden_units, activation='relu')(h)
                     h = Dense(units=hidden_units, activation='relu')(h)
 
+                # Generate the block backcast and forecast.
                 backcast_block, forecast_block = get_block_output(
                     stack_type=stacks[s],
                     dense_layers_output=h,
@@ -433,7 +451,12 @@ def build_model_graph(backcast_time_idx,
                     num_generic_coefficients=num_generic_coefficients,
                     share_coefficients=share_coefficients)
 
+                # Substract the current block backcast from the previous block backcast.
+                # See Section 3.2 in the N-BEATS paper.
                 backcast = Subtract()([backcast, backcast_block])
+
+                # Add the current block forecast to the previous block forecast.
+                # See Section 3.2 in the N-BEATS paper.
                 forecast = Add()([forecast, forecast_block])
 
     return Model(x, [backcast, forecast])
