@@ -43,34 +43,33 @@ class NBeats():
         num_trend_coefficients: int.
             Number of basis expansion coefficients of the trend block. This is the number of polynomial terms
             used for modelling the trend. This parameter is only used when the model includes a trend stack.
-            The default is 3.
 
         num_seasonal_coefficients: int.
             Number of basis expansion coefficients of the seasonality block. This is the number of Fourier terms
             used for modelling the seasonality. This parameter is only used when the model includes a seasonality
-            stack. The default is 5.
+            stack.
 
         num_generic_coefficients: int.
             Number of basis expansion coefficients of the generic block. This parameter is only used when the
-            model includes a generic stack. The default is 7.
+            model includes a generic stack.
 
         hidden_units: int.
-            Number of hidden units of each of the 4 layers of the fully connected stack. The default is 100.
+            Number of hidden units of each of the 4 layers of the fully connected stack.
 
         stacks: list of strings.
             The length of the list is the number of stacks, the items in the list are strings identifying the
-            stack types (either 'trend', 'seasonality' or 'generic'). The default is ['trend', 'seasonality'].
+            stack types (either 'trend', 'seasonality' or 'generic').
 
         num_blocks_per_stack: int.
-            The number of blocks in each stack. The default is 3.
+            The number of blocks in each stack.
 
         share_weights: bool.
             True if the weights of the 4 layers of the fully connected stack should be shared by the different
-            blocks inside the same stack, False otherwise. The default is True.
+            blocks inside the same stack, False otherwise.
 
         share_coefficients: bool.
             True if the forecast and backcast of each block should share the same basis expansion coefficients,
-            False otherwise. The default is True.
+            False otherwise.
         '''
 
         # Cast the data to numpy array.
@@ -105,8 +104,8 @@ class NBeats():
 
     def fit(self,
             loss='mse',
-            learning_rate=0.01,
-            batch_size=128,
+            learning_rate=0.001,
+            batch_size=32,
             epochs=100,
             validation_split=0.2,
             backcast_loss_weight=0.5):
@@ -118,23 +117,22 @@ class NBeats():
         __________________________________
         loss: str, tf.function.
             Loss function, see https://www.tensorflow.org/api_docs/python/tf/keras/losses.
-            The default is 'mse'.
 
         learning_rate: float.
-            Learning rate, the default is 0.01.
+            Learning rate.
 
         batch_size: int.
-            Batch size, the default is 128.
+            Batch size.
 
         epochs: int.
-            Number of epochs, the default is 100.
+            Number of epochs.
 
         validation_split: float.
-            Fraction of the training data to be used as validation data, must be between 0 and 1. The default is 0.2.
+            Fraction of the training data to be used as validation data, must be between 0 and 1.
 
         backcast_loss_weight: float.
             Weight of backcast in comparison to forecast when calculating the loss, must be between 0 and 1. A weight
-            of 0.5 means that forecast and backcast loss is weighted the same. The default is 0.5.
+            of 0.5 means that forecast and backcast loss is weighted the same.
         '''
 
         if backcast_loss_weight < 0 or backcast_loss_weight > 1:
@@ -144,8 +142,7 @@ class NBeats():
         self.model.compile(
             optimizer=Adam(learning_rate=learning_rate),
             loss=[loss, loss],
-            loss_weights=[backcast_loss_weight, 1 - backcast_loss_weight]
-        )
+            loss_weights=[backcast_loss_weight, 1 - backcast_loss_weight])
 
         # Fit the model.
         self.history = self.model.fit(
@@ -155,8 +152,7 @@ class NBeats():
             batch_size=batch_size,
             validation_split=validation_split,
             verbose=0,
-            callbacks=[callback()]
-        )
+            callbacks=[callback()])
 
     def predict(self, index, return_backcast=False):
 
@@ -458,4 +454,4 @@ def build_model_graph(backcast_time_idx,
 
 class callback(Callback):
     def on_epoch_end(self, epoch, logs=None):
-        print('epoch: {}, loss: {:,.4f}, val_loss: {:,.4f}'.format(1 + epoch, logs['loss'], logs['val_loss']))
+        print('epoch: {}, loss: {:,.6f}, val_loss: {:,.6f}'.format(1 + epoch, logs['loss'], logs['val_loss']))

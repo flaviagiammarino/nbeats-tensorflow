@@ -70,33 +70,23 @@ def get_training_sequences(y, t, H):
     if H < 1:
         raise ValueError('The length of the forecast period should be greater than or equal to one.')
 
-    elif t <= 1:
-        raise ValueError('The length of the lookback period should be greater than one.')
+    if t < H:
+        raise ValueError('The length of the lookback period must be greater than the length of the forecast period.')
 
-    elif t + H >= len(y):
+    if t + H >= len(y):
         raise ValueError('The combined length of the forecast and lookback periods cannot exceed the length of the time series.')
 
-    else:
+    X = []
+    Y = []
 
-        if len(y) - t - H + 1 < 100:
-            warnings.warn('Only {} sequences are available for training the model, consider decreasing '
-                          'the length of the forecast and lookback periods.'.format(len(y) - t - H + 1))
+    for T in range(t, len(y) - H + 1):
+        X.append(y[T - t: T])
+        Y.append(y[T: T + H])
 
-        if t % H != 0:
-            warnings.warn('It is recommended to set the length of the lookback period equal to a multiple '
-                          'of the length of the forecast period, this multiple is usually between 2 and 7.')
+    X = np.array(X)
+    Y = np.array(Y)
 
-        X = []
-        Y = []
-
-        for T in range(t, len(y) - H + 1):
-            X.append(y[T - t: T])
-            Y.append(y[T: T + H])
-
-        X = np.array(X)
-        Y = np.array(Y)
-
-        return X, Y
+    return X, Y
 
 
 def get_time_indices(t, H):

@@ -108,11 +108,11 @@ def trend_block(h, p, t_b, t_f, share_theta):
     __________________________________
     backcast: tf.Tensor
         Trend backcast, 2-dimensional tensor with shape (N, t) where N is the batch size and
-        t is the length of input sequences (lookback period)
+        t is the length of the input sequences (lookback period)
 
     forecast: tf.Tensor
         Trend forecast, 2-dimensional tensor with shape (N, H) where N is the batch size and
-        H is the lenght of output sequences (forecast period).
+        H is the lenght of the output sequences (forecast period).
     '''
 
     if share_theta:
@@ -171,11 +171,11 @@ def seasonality_block(h, p, t_b, t_f, share_theta):
     __________________________________
     backcast: tf.Tensor
         Seasonality backcast, 2-dimensional tensor with shape (N, t) where N is the batch size and
-        t is the length of input sequences (lookback period)
+        t is the length of the input sequences (lookback period)
 
     forecast: tf.Tensor
         Seasonality forecast, 2-dimensional tensor with shape (N, H) where N is the batch size and
-        H is the lenght of output sequences (forecast period).
+        H is the lenght of the output sequences (forecast period).
     '''
 
     if share_theta:
@@ -234,11 +234,11 @@ def generic_block(h, p, t_b, t_f, share_theta):
     __________________________________
     backcast: tf.Tensor
         Generic backcast, 2-dimensional tensor with shape (N, t) where N is the batch size and
-        t is the length of input sequences (lookback period)
+        t is the length of the input sequences (lookback period)
 
     forecast: tf.Tensor
         Generic forecast, 2-dimensional tensor with shape (N, H) where N is the batch size and
-        H is the lenght of output sequences (forecast period).
+        H is the lenght of the output sequences (forecast period).
     '''
 
     if share_theta:
