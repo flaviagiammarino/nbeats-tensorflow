@@ -22,11 +22,9 @@ from nbeats_tensorflow.plots import plot_results
 # Generate a time series
 N = 1000
 t = np.linspace(0, 1, N)
-
 trend = 30 + 20 * t + 10 * (t ** 2)
 seasonality = 5 * np.cos(2 * np.pi * (10 * t - 0.5))
 noise = np.random.normal(0, 1, N)
-
 y = trend + seasonality + noise
 
 # Fit the model
