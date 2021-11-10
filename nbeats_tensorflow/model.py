@@ -27,7 +27,7 @@ class NBeats():
         '''
         Implementation of univariate time series forecasting model introduced in Oreshkin, B. N., Carpov, D.,
         Chapados, N., & Bengio, Y. (2019). N-BEATS: Neural basis expansion analysis for interpretable time
-        series forecasting. arXiv preprint arXiv:1905.10437.
+        series forecasting. https://arxiv.org/abs/1905.10437.
 
         Parameters:
         __________________________________
@@ -42,16 +42,15 @@ class NBeats():
 
         num_trend_coefficients: int.
             Number of basis expansion coefficients of the trend block. This is the number of polynomial terms
-            used for modelling the trend. This parameter is only used when the model includes a trend stack.
+            used for modelling the trend component. Only used when the model includes a trend stack.
 
         num_seasonal_coefficients: int.
             Number of basis expansion coefficients of the seasonality block. This is the number of Fourier terms
-            used for modelling the seasonality. This parameter is only used when the model includes a seasonality
-            stack.
+            used for modelling the seasonal component. Only used when the model includes a seasonality stack.
 
         num_generic_coefficients: int.
-            Number of basis expansion coefficients of the generic block. This parameter is only used when the
-            model includes a generic stack.
+            Number of basis expansion coefficients of the generic block. This is the number of linear terms used
+            for modelling the autoregressive component. Only used when the model includes a generic stack.
 
         hidden_units: int.
             Number of hidden units of each of the 4 layers of the fully connected stack.
@@ -131,8 +130,8 @@ class NBeats():
             Fraction of the training data to be used as validation data, must be between 0 and 1.
 
         backcast_loss_weight: float.
-            Weight of backcast in comparison to forecast when calculating the loss, must be between 0 and 1. A weight
-            of 0.5 means that forecast and backcast loss is weighted the same.
+            Weight of backcast in comparison to forecast when calculating the loss, must be between 0 and 1.
+            A weight of 0.5 means that forecast and backcast loss is weighted the same.
         '''
 
         if backcast_loss_weight < 0 or backcast_loss_weight > 1:
@@ -266,14 +265,15 @@ def get_block_output(stack_type,
 
     num_trend_coefficients: int.
         Number of basis expansion coefficients of the trend block. This is the number of polynomial terms used for
-        modelling the trend.
+        modelling the trend component.
 
     num_seasonal_coefficients: int.
         Number of basis expansion coefficients of the seasonality block. This is the number of Fourier terms used
-        for modelling the seasonality.
+        for modelling the seasonal component.
 
     num_generic_coefficients: int.
-        Number of basis expansion coefficients of the generic block.
+        Number of basis expansion coefficients of the generic block. This is the number of linear terms used for
+        modelling the autoregressive component.
 
     share_coefficients: bool.
         True if the block forecast and backcast should share the same basis expansion coefficients, False otherwise.

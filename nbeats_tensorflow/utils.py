@@ -68,10 +68,10 @@ def get_training_sequences(y, t, H):
     '''
 
     if H < 1:
-        raise ValueError('The length of the forecast period should be greater than or equal to one.')
+        raise ValueError('The length of the forecast period should be greater than one.')
 
     if t < H:
-        raise ValueError('The length of the lookback period must be greater than the length of the forecast period.')
+        raise ValueError('The lookback period cannot be shorter than the forecast period.')
 
     if t + H >= len(y):
         raise ValueError('The combined length of the forecast and lookback periods cannot exceed the length of the time series.')
