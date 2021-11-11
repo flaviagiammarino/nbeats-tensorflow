@@ -89,7 +89,7 @@ class NBeats():
         backcast_time_idx, forecast_time_idx = get_time_indices(lookback_period, forecast_period)
 
         # Build the model graph.
-        self.model = build_model_graph(
+        self.model = build_fn(
             backcast_time_idx,
             forecast_time_idx,
             num_trend_coefficients,
@@ -307,16 +307,16 @@ def get_block_output(stack_type,
             share_theta=share_coefficients)
 
 
-def build_model_graph(backcast_time_idx,
-                      forecast_time_idx,
-                      num_trend_coefficients,
-                      num_seasonal_coefficients,
-                      num_generic_coefficients,
-                      hidden_units,
-                      stacks,
-                      num_blocks_per_stack,
-                      share_weights,
-                      share_coefficients):
+def build_fn(backcast_time_idx,
+             forecast_time_idx,
+             num_trend_coefficients,
+             num_seasonal_coefficients,
+             num_generic_coefficients,
+             hidden_units,
+             stacks,
+             num_blocks_per_stack,
+             share_weights,
+             share_coefficients):
 
     '''
     Build the model graph.
