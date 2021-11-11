@@ -107,7 +107,8 @@ class NBeats():
             batch_size=32,
             epochs=100,
             validation_split=0.2,
-            backcast_loss_weight=0.5):
+            backcast_loss_weight=0.5,
+            verbose=True):
 
         '''
         Train the model.
@@ -132,6 +133,9 @@ class NBeats():
         backcast_loss_weight: float.
             Weight of backcast in comparison to forecast when calculating the loss, must be between 0 and 1.
             A weight of 0.5 means that forecast and backcast loss is weighted the same.
+
+        verbose: bool.
+            True if the training history should be displayed in the console, False otherwise.
         '''
 
         if backcast_loss_weight < 0 or backcast_loss_weight > 1:
@@ -151,7 +155,7 @@ class NBeats():
             batch_size=batch_size,
             validation_split=validation_split,
             verbose=0,
-            callbacks=[callback()])
+            callbacks=[callback()] if verbose else None)
 
     def predict(self, index, return_backcast=False):
 
