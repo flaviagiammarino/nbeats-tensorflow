@@ -458,4 +458,7 @@ def build_fn(backcast_time_idx,
 
 class callback(Callback):
     def on_epoch_end(self, epoch, logs=None):
-        print('epoch: {}, loss: {:,.6f}, val_loss: {:,.6f}'.format(1 + epoch, logs['loss'], logs['val_loss']))
+        if 'val_loss' in logs.keys():
+            print('epoch: {}, loss: {:,.6f}, val_loss: {:,.6f}'.format(1 + epoch, logs['loss'], logs['val_loss']))
+        else:
+            print('epoch: {}, loss: {:,.6f}'.format(1 + epoch, logs['loss']))
