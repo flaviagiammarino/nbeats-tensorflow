@@ -53,14 +53,14 @@ model.fit(
 ```python
 # Plot the in-sample predictions
 predictions = model.predict(index=800, return_backcast=True)
-predictions_ = plot_results(predictions)
-predictions_.write_image('predictions.png', width=650, height=400)
+fig = plot_results(predictions)
+fig.write_image('predictions.png', width=650, height=400)
 ```
 ![predictions](example/predictions.png)
 ```python
 # Plot the out-of-sample forecasts
 forecasts = model.forecast(return_backcast=True)
-forecasts_ = plot_results(forecasts)
-forecasts_.write_image('forecasts.png', width=650, height=400)
+fig = plot_results(forecasts)
+fig.write_image('forecasts.png', width=650, height=400)
 ```
 ![forecasts](example/forecasts.png)
