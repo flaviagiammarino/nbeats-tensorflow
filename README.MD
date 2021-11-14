@@ -8,7 +8,7 @@ Chapados, N., & Bengio, Y. (2019). N-BEATS: Neural basis expansion analysis for 
 ```bash
 pandas==1.3.4
 numpy==1.19.5
-tensorflow==2.6.0
+tensorflow==2.7.0
 plotly==5.3.1
 kaleido==0.2.1
 ```
