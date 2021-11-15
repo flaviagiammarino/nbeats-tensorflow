@@ -245,7 +245,6 @@ class NBeats():
         # Return the data frame.
         return forecasts
 
-
     def plot_predictions(self):
 
         '''
