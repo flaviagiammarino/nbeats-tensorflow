@@ -1,6 +1,5 @@
 import numpy as np
 from nbeats_tensorflow.model import NBeats
-from nbeats_tensorflow.plots import plot_results
 
 # Generate a time series
 N = 1000
@@ -14,10 +13,10 @@ y = trend + seasonality + noise
 
 # Fit the model
 model = NBeats(
-    target=y,
+    y=y,
     forecast_period=200,
     lookback_period=400,
-    hidden_units=30,
+    units=30,
     stacks=['trend', 'seasonality'],
     num_trend_coefficients=3,
     num_seasonal_coefficients=5,
@@ -36,10 +35,10 @@ model.fit(
 
 # Plot the in-sample predictions
 predictions = model.predict(index=800, return_backcast=True)
-fig = plot_results(predictions)
+fig = model.plot_predictions()
 fig.write_image('predictions.png', width=650, height=400)
 
 # Plot the out-of-sample forecasts
 forecasts = model.forecast(return_backcast=True)
-fig = plot_results(forecasts)
+fig = model.plot_forecasts()
 fig.write_image('forecasts.png', width=650, height=400)

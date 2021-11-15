@@ -8,17 +8,18 @@ pd.options.mode.chained_assignment = None
 
 from nbeats_tensorflow.utils import cast_target_to_array, get_training_sequences, get_time_indices
 from nbeats_tensorflow.blocks import trend_block, seasonality_block, generic_block
+from nbeats_tensorflow.plots import plot
 
 class NBeats():
 
     def __init__(self,
-                 target,
+                 y,
                  forecast_period,
                  lookback_period,
                  num_trend_coefficients=3,
                  num_seasonal_coefficients=5,
                  num_generic_coefficients=7,
-                 hidden_units=100,
+                 units=100,
                  stacks=['trend', 'seasonality'],
                  num_blocks_per_stack=3,
                  share_weights=True,
@@ -31,7 +32,7 @@ class NBeats():
 
         Parameters:
         __________________________________
-        target: np.array, pd.Series, list.
+        y: np.array, pd.Series, list.
             Time series.
 
         forecast_period: int.
@@ -52,7 +53,7 @@ class NBeats():
             Number of basis expansion coefficients of the generic block. This is the number of linear terms used
             for modelling the autoregressive component. Only used when the model includes a generic stack.
 
-        hidden_units: int.
+        units: int.
             Number of hidden units of each of the 4 layers of the fully connected stack.
 
         stacks: list of strings.
@@ -72,7 +73,7 @@ class NBeats():
         '''
 
         # Cast the data to numpy array.
-        y = cast_target_to_array(target)
+        y = cast_target_to_array(y)
 
         # Scale the data.
         self.y_min, self.y_max = np.min(y), np.max(y)
@@ -95,7 +96,7 @@ class NBeats():
             num_trend_coefficients,
             num_seasonal_coefficients,
             num_generic_coefficients,
-            hidden_units,
+            units,
             stacks,
             num_blocks_per_stack,
             share_weights,
@@ -199,6 +200,9 @@ class NBeats():
 
         predictions = predictions.astype(float)
 
+        # Save the data frame.
+        self.predictions = predictions
+
         # Return the data frame.
         return predictions
 
@@ -235,8 +239,36 @@ class NBeats():
 
         forecasts = forecasts.astype(float)
 
+        # Save the data frame.
+        self.forecasts = forecasts
+
         # Return the data frame.
         return forecasts
+
+
+    def plot_predictions(self):
+
+        '''
+        Plot the in-sample predictions.
+
+        Returns:
+        __________________________________
+        go.Figure
+        '''
+
+        return plot(self.predictions)
+
+    def plot_forecasts(self):
+
+        '''
+        Plot the out-of-sample forecasts.
+
+        Returns:
+        __________________________________
+        go.Figure
+        '''
+
+        return plot(self.forecasts)
 
 
 def get_block_output(stack_type,
@@ -316,7 +348,7 @@ def build_fn(backcast_time_idx,
              num_trend_coefficients,
              num_seasonal_coefficients,
              num_generic_coefficients,
-             hidden_units,
+             units,
              stacks,
              num_blocks_per_stack,
              share_weights,
@@ -342,7 +374,7 @@ def build_fn(backcast_time_idx,
     num_generic_coefficients: int.
         Number of basis expansion coefficients of the generic block, corresponds to the number of linear terms.
 
-    hidden_units: int.
+    units: int.
         Number of hidden units of each of the 4 layers of the fully connected stack. Note that all fully connected
         layers have the same number of units.
 
@@ -372,10 +404,10 @@ def build_fn(backcast_time_idx,
         # layers across all blocks in the stack.
         if share_weights:
 
-            d1 = Dense(units=hidden_units, activation='relu')
-            d2 = Dense(units=hidden_units, activation='relu')
-            d3 = Dense(units=hidden_units, activation='relu')
-            d4 = Dense(units=hidden_units, activation='relu')
+            d1 = Dense(units=units, activation='relu')
+            d2 = Dense(units=units, activation='relu')
+            d3 = Dense(units=units, activation='relu')
+            d4 = Dense(units=units, activation='relu')
 
         # Loop across the different blocks in the stack.
         for b in range(num_blocks_per_stack):
@@ -393,10 +425,10 @@ def build_fn(backcast_time_idx,
 
                 else:
 
-                    h = Dense(units=hidden_units, activation='relu')(x)
-                    h = Dense(units=hidden_units, activation='relu')(h)
-                    h = Dense(units=hidden_units, activation='relu')(h)
-                    h = Dense(units=hidden_units, activation='relu')(h)
+                    h = Dense(units=units, activation='relu')(x)
+                    h = Dense(units=units, activation='relu')(h)
+                    h = Dense(units=units, activation='relu')(h)
+                    h = Dense(units=units, activation='relu')(h)
 
                 # Generate the block backcast and forecast.
                 backcast_block, forecast_block = get_block_output(
@@ -429,10 +461,10 @@ def build_fn(backcast_time_idx,
 
                 else:
 
-                    h = Dense(units=hidden_units, activation='relu')(backcast)
-                    h = Dense(units=hidden_units, activation='relu')(h)
-                    h = Dense(units=hidden_units, activation='relu')(h)
-                    h = Dense(units=hidden_units, activation='relu')(h)
+                    h = Dense(units=units, activation='relu')(backcast)
+                    h = Dense(units=units, activation='relu')(h)
+                    h = Dense(units=units, activation='relu')(h)
+                    h = Dense(units=units, activation='relu')(h)
 
                 # Generate the block backcast and forecast.
                 backcast_block, forecast_block = get_block_output(

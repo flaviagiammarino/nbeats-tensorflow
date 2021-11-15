@@ -1,6 +1,6 @@
 import plotly.graph_objects as go
 
-def plot_results(df):
+def plot(df):
 
     '''
     Plot the actual and predicted values.

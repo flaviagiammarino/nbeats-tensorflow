@@ -16,22 +16,23 @@ kaleido==0.2.1
 ```python
 import numpy as np
 from nbeats_tensorflow.model import NBeats
-from nbeats_tensorflow.plots import plot_results
 
 # Generate a time series
 N = 1000
 t = np.linspace(0, 1, N)
+
 trend = 30 + 20 * t + 10 * (t ** 2)
 seasonality = 5 * np.cos(2 * np.pi * (10 * t - 0.5))
 noise = np.random.normal(0, 1, N)
+
 y = trend + seasonality + noise
 
 # Fit the model
 model = NBeats(
-    target=y,
+    y=y,
     forecast_period=200,
     lookback_period=400,
-    hidden_units=30,
+    units=30,
     stacks=['trend', 'seasonality'],
     num_trend_coefficients=3,
     num_seasonal_coefficients=5,
@@ -51,14 +52,14 @@ model.fit(
 ```python
 # Plot the in-sample predictions
 predictions = model.predict(index=800, return_backcast=True)
-fig = plot_results(predictions)
+fig = model.plot_predictions()
 fig.write_image('predictions.png', width=650, height=400)
 ```
 ![predictions](example/predictions.png)
 ```python
 # Plot the out-of-sample forecasts
 forecasts = model.forecast(return_backcast=True)
-fig = plot_results(forecasts)
+fig = model.plot_forecasts()
 fig.write_image('forecasts.png', width=650, height=400)
 ```
 ![forecasts](example/forecasts.png)
