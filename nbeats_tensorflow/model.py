@@ -51,7 +51,7 @@ class NBeats():
 
         num_generic_coefficients: int.
             Number of basis expansion coefficients of the generic block. This is the number of linear terms used
-            for modelling the autoregressive component. Only used when the model includes a generic stack.
+            for modelling the generic component. Only used when the model includes a generic stack.
 
         units: int.
             Number of hidden units of each of the 4 layers of the fully connected stack.
@@ -136,7 +136,7 @@ class NBeats():
             A weight of 0.5 means that forecast and backcast loss is weighted the same.
 
         verbose: bool.
-            True if the training history should be displayed in the console, False otherwise.
+            True if the training history should be printed in the console, False otherwise.
         '''
 
         if backcast_loss_weight < 0 or backcast_loss_weight > 1:
@@ -293,10 +293,10 @@ def get_block_output(stack_type,
         Note that all fully connected layers have the same number of units.
 
     backcast_time_idx: tf.Tensor
-        Input time index, 1-dimensional tensor with shape t used for generating the backcast.
+        Input time index, 1-dimensional tensor with length t used for generating the backcast.
 
     forecast_time_idx: tf.Tensor
-        Output time index, 1-dimensional tensor with shape H used for generating the forecast.
+        Output time index, 1-dimensional tensor with length H used for generating the forecast.
 
     num_trend_coefficients: int.
         Number of basis expansion coefficients of the trend block. This is the number of polynomial terms used for
@@ -308,7 +308,7 @@ def get_block_output(stack_type,
 
     num_generic_coefficients: int.
         Number of basis expansion coefficients of the generic block. This is the number of linear terms used for
-        modelling the autoregressive component.
+        modelling the generic component.
 
     share_coefficients: bool.
         True if the block forecast and backcast should share the same basis expansion coefficients, False otherwise.
@@ -359,10 +359,10 @@ def build_fn(backcast_time_idx,
     Parameters:
     __________________________________
     backcast_time_idx: tf.Tensor
-        Input time index, 1-dimensional tensor with shape t used for generating the backcasts.
+        Input time index, 1-dimensional tensor with length t used for generating the backcast.
 
     forecast_time_idx: tf.Tensor
-        Output time index, 1-dimensional tensor with shape H used for generating the forecasts.
+        Output time index, 1-dimensional tensor with length H used for generating the forecast.
 
     num_trend_coefficients: int.
         Number of basis expansion coefficients of the trend block, corresponds to the number of polynomial terms.
@@ -444,7 +444,7 @@ def build_fn(backcast_time_idx,
                 # See Section 3.2 in the N-BEATS paper.
                 backcast = Subtract()([x, backcast_block])
 
-                # For the first block of the first stack, no adjustment is made to the forecast.
+                # For the first block of the first stack, no adjustment is applied to the forecast.
                 forecast = forecast_block
 
             else:

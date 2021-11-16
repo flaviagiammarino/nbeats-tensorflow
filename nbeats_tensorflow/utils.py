@@ -106,19 +106,19 @@ def get_time_indices(t, H):
     Returns:
     __________________________________
     t_b: tf.Tensor
-        Input time index, 1-dimensional tensor with shape t used for backcasting.
+        Input time index, 1-dimensional tensor with length t used for backcasting.
 
     t_f: tf.Tensor
-        Output time index, 1-dimensional tensor with shape H used for forecasting.
+        Output time index, 1-dimensional tensor with length H used for forecasting.
     '''
 
-    # Full time index, tensor with shape t + H.
+    # Full time index, 1-dimensional tensor with length t + H.
     t_ = tf.cast(tf.range(0, t + H), dtype=tf.float32) / (t + H)
 
-    # Input time index, tensor with shape t.
+    # Input time index, 1-dimensional tensor with length t.
     t_b = t_[:t]
 
-    # Output time index, tensor with shape H.
+    # Output time index, 1-dimensional tensor with length H.
     t_f = t_[t:]
 
     return t_b, t_f

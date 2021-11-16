@@ -45,6 +45,7 @@ model.fit(
     batch_size=32,
     learning_rate=0.003,
     backcast_loss_weight=0.5,
+    verbose=True
 )
 ```
 ```python

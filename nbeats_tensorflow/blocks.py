@@ -6,7 +6,7 @@ from tensorflow.keras.layers import Dense, Lambda
 def trend_model(theta, t_, p):
 
     '''
-    Generate the trend backcasts or forecasts by multiplying the matrix of basis expansion coefficients
+    Generate the trend backcast or forecast by multiplying the matrix of basis expansion coefficients
     by the matrix of powers of the time index. See Section 3.3 in the N-BEATS paper.
 
     Parameters:
@@ -16,8 +16,8 @@ def trend_model(theta, t_, p):
         size and p is the number of polynomial terms.
 
     t_: tf.Tensor
-        Time index, 1-dimensional tensor with shape t for the trend backcasts or with shape H for
-        the trend forecasts.
+        Time index, 1-dimensional tensor with length t for the trend backcast or with length H for
+        the trend forecast.
 
     p: int
         Number of polynomial terms.
@@ -42,7 +42,7 @@ def trend_model(theta, t_, p):
 def seasonality_model(theta, t_, p):
 
     '''
-    Generate the seasonality backcasts or forecasts by multiplying the matrix of basis expansion
+    Generate the seasonality backcast or forecast by multiplying the matrix of basis expansion
     coefficients by the matrix of Fourier terms. See Section 3.3 in the N-BEATS paper.
 
     Parameters:
@@ -53,8 +53,8 @@ def seasonality_model(theta, t_, p):
         p cosine functions.
 
     t_: tf.Tensor
-        Time index, 1-dimensional tensor with shape t for the seasonality backcasts or with
-        shape H for the seasonality forecasts.
+        Time index, 1-dimensional tensor with length t for the seasonality backcast or with
+        length H for the seasonality forecast.
 
     p: int
         Number of Fourier terms.
@@ -81,7 +81,7 @@ def seasonality_model(theta, t_, p):
 def trend_block(h, p, t_b, t_f, share_theta):
 
     '''
-    Derive the trend basis expansion coefficients and generate the trend backcasts and forecasts.
+    Derive the trend basis expansion coefficients and generate the trend backcast and forecast.
     See Section 3.1 and Section 3.3 in the N-BEATS paper.
 
     Parameters:
@@ -95,45 +95,45 @@ def trend_block(h, p, t_b, t_f, share_theta):
        Number of polynomial terms.
 
     t_b: tf.Tensor
-        Input time index, 1-dimensional tensor with shape t used for generating the backcasts.
+        Input time index, 1-dimensional tensor with length t used for generating the backcast.
 
     t_f: tf.Tensor
-        Output time index, 1-dimensional tensor with shape H used for generating the forecasts.
+        Output time index, 1-dimensional tensor with length H used for generating the forecast.
 
     share_theta: bool.
-        True if the backcasts and forecasts should share the same basis expansion coefficients,
+        True if the backcast and forecast should share the same basis expansion coefficients,
         False otherwise.
 
     Returns:
     __________________________________
     backcast: tf.Tensor
         Trend backcast, 2-dimensional tensor with shape (N, t) where N is the batch size and
-        t is the length of the input sequences (lookback period)
+        t is the length of the lookback period.
 
     forecast: tf.Tensor
         Trend forecast, 2-dimensional tensor with shape (N, H) where N is the batch size and
-        H is the lenght of the output sequences (forecast period).
+        H is the length of the forecast period.
     '''
 
     if share_theta:
 
-        # If share_theta is True, use the same basis expansion
+        # If share_theta is true, use the same basis expansion
         # coefficients for backcasting and forecasting.
         theta = Dense(units=p, activation='linear', use_bias=False)(h)
 
-        # Obtain the backcasts and forecasts as the dot product of their common
+        # Obtain the backcast and forecast as the dot product of their common
         # basis expansion coefficients and of the matrix of polynomial terms.
         backcast = Lambda(function=trend_model, arguments={'p': p, 't_': t_b})(theta)
         forecast = Lambda(function=trend_model, arguments={'p': p, 't_': t_f})(theta)
 
     else:
 
-        # If share_theta is False, use different basis expansion
+        # If share_theta is false, use different basis expansion
         # coefficients for backcasting and forecasting.
         theta_b = Dense(units=p, activation='linear', use_bias=False)(h)
         theta_f = Dense(units=p, activation='linear', use_bias=False)(h)
 
-        # Obtain the backcasts and forecasts as the dot product of their respective
+        # Obtain the backcast and forecast as the dot product of their respective
         # basis expansion coefficients and of the matrix of polynomial terms.
         backcast = Lambda(function=trend_model, arguments={'p': p, 't_': t_b})(theta_b)
         forecast = Lambda(function=trend_model, arguments={'p': p, 't_': t_f})(theta_f)
@@ -145,7 +145,7 @@ def seasonality_block(h, p, t_b, t_f, share_theta):
 
     '''
     Derive the seasonality basis expansion coefficients and generate the seasonality
-    backcasts and forecasts. See Section 3.1 and Section 3.3 in the N-BEATS paper.
+    backcast and forecast. See Section 3.1 and Section 3.3 in the N-BEATS paper.
 
     Parameters:
     __________________________________
@@ -158,45 +158,45 @@ def seasonality_block(h, p, t_b, t_f, share_theta):
         Number of Fourier terms.
 
     t_b: tf.Tensor
-        Input time index, 1-dimensional tensor with shape t used for generating the backcasts.
+        Input time index, 1-dimensional tensor with length t used for generating the backcast.
 
     t_f: tf.Tensor
-        Output time index, 1-dimensional tensor with shape H used for generating the forecasts.
+        Output time index, 1-dimensional tensor with length H used for generating the forecast.
 
     share_theta: bool.
-        True if the backcasts and forecasts should share the same basis expansion coefficients,
+        True if the backcast and forecast should share the same basis expansion coefficients,
         False otherwise.
 
     Returns:
     __________________________________
     backcast: tf.Tensor
         Seasonality backcast, 2-dimensional tensor with shape (N, t) where N is the batch size and
-        t is the length of the input sequences (lookback period)
+        t is the length of the lookback period.
 
     forecast: tf.Tensor
         Seasonality forecast, 2-dimensional tensor with shape (N, H) where N is the batch size and
-        H is the lenght of the output sequences (forecast period).
+        H is the length of the forecast period.
     '''
 
     if share_theta:
 
-        # If share_theta is True, use the same basis expansion
+        # If share_theta is true, use the same basis expansion
         # coefficients for backcasting and forecasting.
         theta = Dense(units=2 * p, activation='linear', use_bias=False)(h)
 
-        # Obtain the backcasts and forecasts as the dot product of their common
+        # Obtain the backcast and forecast as the dot product of their common
         # basis expansion coefficients and of the matrix of Fourier terms.
         backcast = Lambda(function=seasonality_model, arguments={'p': p, 't_': t_b})(theta)
         forecast = Lambda(function=seasonality_model, arguments={'p': p, 't_': t_f})(theta)
 
     else:
 
-        # If share_theta is False, use different basis expansion
+        # If share_theta is false, use different basis expansion
         # coefficients for backcasting and forecasting.
         theta_b = Dense(units=2 * p, activation='linear', use_bias=False)(h)
         theta_f = Dense(units=2 * p, activation='linear', use_bias=False)(h)
 
-        # Obtain the backcasts and forecasts as the dot product of their respective
+        # Obtain the backcast and forecast as the dot product of their respective
         # basis expansion coefficients and of the matrix of Fourier terms.
         backcast = Lambda(function=seasonality_model, arguments={'p': p, 't_': t_b})(theta_b)
         forecast = Lambda(function=seasonality_model, arguments={'p': p, 't_': t_f})(theta_f)
@@ -207,8 +207,8 @@ def seasonality_block(h, p, t_b, t_f, share_theta):
 def generic_block(h, p, t_b, t_f, share_theta):
 
     '''
-    Derive the generic basis expansion coefficients and generate the generic backcasts and
-    forecasts. See Section 3.1 and Section 3.3 in the N-BEATS paper.
+    Derive the generic basis expansion coefficients and generate the backcast and
+    forecast. See Section 3.1 and Section 3.3 in the N-BEATS paper.
 
     Parameters:
     __________________________________
@@ -221,45 +221,45 @@ def generic_block(h, p, t_b, t_f, share_theta):
         Number of linear terms.
 
     t_b: tf.Tensor
-        Input time index, 1-dimensional tensor with shape t used for generating the backcasts.
+        Input time index, 1-dimensional tensor with length t used for generating the backcast.
 
     t_f: tf.Tensor
-        Output time index, 1-dimensional tensor with shape H used for generating the forecasts.
+        Output time index, 1-dimensional tensor with length H used for generating the forecast.
 
     share_theta: bool.
-        True if the backcasts and forecasts should share the same basis expansion coefficients,
+        True if the backcast and forecast should share the same basis expansion coefficients,
         False otherwise.
 
     Returns:
     __________________________________
     backcast: tf.Tensor
         Generic backcast, 2-dimensional tensor with shape (N, t) where N is the batch size and
-        t is the length of the input sequences (lookback period)
+        t is the length of the lookback period.
 
     forecast: tf.Tensor
         Generic forecast, 2-dimensional tensor with shape (N, H) where N is the batch size and
-        H is the lenght of the output sequences (forecast period).
+        H is the length of the forecast period.
     '''
 
     if share_theta:
 
-        # If share_theta is True, use the same basis expansion
+        # If share_theta is true, use the same basis expansion
         # coefficients for backcasting and forecasting.
         theta = Dense(units=p, activation='linear', use_bias=False)(h)
 
-        # Obtain the backcasts and forecasts as a linear function of
+        # Obtain the backcast and forecast as a linear function of
         # their common basis expansion coefficients.
         backcast = Dense(units=len(t_b), activation='linear')(theta)
         forecast = Dense(units=len(t_f), activation='linear')(theta)
 
     else:
 
-        # If share_theta is False, use different basis expansion
+        # If share_theta is false, use different basis expansion
         # coefficients for backcasting and forecasting.
         theta_b = Dense(units=p, activation='linear', use_bias=False)(h)
         theta_f = Dense(units=p, activation='linear', use_bias=False)(h)
 
-        # Obtain the backcasts and forecasts as a linear function of
+        # Obtain the backcast and forecast as a linear function of
         # their respective basis expansion coefficients.
         backcast = Dense(units=len(t_b), activation='linear')(theta_b)
         forecast = Dense(units=len(t_f), activation='linear')(theta_f)
