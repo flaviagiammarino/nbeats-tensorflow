@@ -62,6 +62,3 @@ fig = model.plot_forecasts()
 fig.write_image('forecasts.png', width=650, height=400)
 ```
 ![forecasts](example/forecasts.png)
-
-### Resources
-A tutorial notebook is available [on Kaggle](https://www.kaggle.com/flaviagiammarino/n-beats-tensorflow-tutorial).
