@@ -2,7 +2,6 @@ import numpy as np
 import tensorflow as tf
 from tensorflow.keras.layers import Dense, Lambda
 
-
 def trend_model(theta, t_, p):
 
     '''

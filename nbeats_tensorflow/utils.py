@@ -1,7 +1,6 @@
 import pandas as pd
 import numpy as np
 import tensorflow as tf
-import warnings
 
 def cast_target_to_array(y):
 
@@ -59,7 +58,7 @@ def get_training_sequences(y, t, H):
     Returns:
     __________________________________
     X: np.array
-        Input sequences, 2-dimensional array of with shape (N - t - H + 1, t) where N is the length
+        Input sequences, 2-dimensional array with shape (N - t - H + 1, t) where N is the length
         of the time series.
 
     Y: np.array
