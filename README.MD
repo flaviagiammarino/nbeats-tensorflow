@@ -1,5 +1,5 @@
 ## N-BEATS TensorFlow
-TensorFlow (Python) implementation of univariate time series forecasting model introduced in Oreshkin, B. N., Carpov, D.,
+TensorFlow implementation of univariate time series forecasting model introduced in Oreshkin, B. N., Carpov, D.,
 Chapados, N., & Bengio, Y. (2019). N-BEATS: Neural basis expansion analysis for interpretable time series forecasting.
 [arXiv:1905.10437](https://arxiv.org/abs/1905.10437).
 
