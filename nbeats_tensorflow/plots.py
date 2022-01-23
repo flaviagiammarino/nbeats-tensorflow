@@ -7,12 +7,12 @@ def plot(df):
 
     Parameters:
     __________________________________
-    df: pd.DataFrame
+    df: pd.DataFrame.
         Data frame with actual and predicted values.
 
     Returns:
     __________________________________
-    fig: go.Figure
+    fig: go.Figure.
         Line chart of actual and predicted values.
     '''
 

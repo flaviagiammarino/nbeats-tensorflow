@@ -10,20 +10,20 @@ def trend_model(theta, t_, p):
 
     Parameters:
     __________________________________
-    theta: tf.Tensor
+    theta: tf.Tensor.
         Basis expansion coefficients, 2-dimensional tensor with shape (N, p) where N is the batch
         size and p is the number of polynomial terms.
 
-    t_: tf.Tensor
+    t_: tf.Tensor.
         Time index, 1-dimensional tensor with length t for the trend backcast or with length H for
         the trend forecast.
 
-    p: int
+    p: int.
         Number of polynomial terms.
 
     Returns:
     __________________________________
-    tf.Tensor
+    tf.Tensor.
         Predicted trend, 2-dimensional tensor with shape (N, t) when backcasting and (N, H) when
         forecasting where N is the batch size.
     '''
@@ -46,21 +46,21 @@ def seasonality_model(theta, t_, p):
 
     Parameters:
     __________________________________
-    theta: tf.Tensor
+    theta: tf.Tensor.
         Basis expansion coefficients, 2-dimensional tensor with shape (N, 2 * p) where N is the
         batch size and 2 * p is the total number of Fourier terms, that is p sine functions plus
         p cosine functions.
 
-    t_: tf.Tensor
+    t_: tf.Tensor.
         Time index, 1-dimensional tensor with length t for the seasonality backcast or with
         length H for the seasonality forecast.
 
-    p: int
+    p: int.
         Number of Fourier terms.
 
     Returns:
     __________________________________
-    tf.Tensor
+    tf.Tensor.
         Predicted seasonality, 2-dimensional tensor with shape (N, t) when backcasting and
         (N, H) when forecasting where N is the batch size.
     '''
@@ -85,18 +85,18 @@ def trend_block(h, p, t_b, t_f, share_theta):
 
     Parameters:
     __________________________________
-    h: tf.Tensor
+    h: tf.Tensor.
         Output of 4-layer fully connected stack, 2-dimensional tensor with shape (N, k) where
         N is the batch size and k is the number of hidden units of each fully connected layer.
         Note that all fully connected layers have the same number of units.
 
-    p: int
+    p: int.
        Number of polynomial terms.
 
-    t_b: tf.Tensor
+    t_b: tf.Tensor.
         Input time index, 1-dimensional tensor with length t used for generating the backcast.
 
-    t_f: tf.Tensor
+    t_f: tf.Tensor.
         Output time index, 1-dimensional tensor with length H used for generating the forecast.
 
     share_theta: bool.
@@ -105,11 +105,11 @@ def trend_block(h, p, t_b, t_f, share_theta):
 
     Returns:
     __________________________________
-    backcast: tf.Tensor
+    backcast: tf.Tensor.
         Trend backcast, 2-dimensional tensor with shape (N, t) where N is the batch size and
         t is the length of the lookback period.
 
-    forecast: tf.Tensor
+    forecast: tf.Tensor.
         Trend forecast, 2-dimensional tensor with shape (N, H) where N is the batch size and
         H is the length of the forecast period.
     '''
@@ -148,18 +148,18 @@ def seasonality_block(h, p, t_b, t_f, share_theta):
 
     Parameters:
     __________________________________
-    h: tf.Tensor
+    h: tf.Tensor.
         Output of 4-layer fully connected stack, 2-dimensional tensor with shape (N, k) where
         N is the batch size and k is the number of hidden units of each fully connected layer.
         Note that all fully connected layers have the same number of units.
 
-    p: int
+    p: int.
         Number of Fourier terms.
 
-    t_b: tf.Tensor
+    t_b: tf.Tensor.
         Input time index, 1-dimensional tensor with length t used for generating the backcast.
 
-    t_f: tf.Tensor
+    t_f: tf.Tensor.
         Output time index, 1-dimensional tensor with length H used for generating the forecast.
 
     share_theta: bool.
@@ -168,11 +168,11 @@ def seasonality_block(h, p, t_b, t_f, share_theta):
 
     Returns:
     __________________________________
-    backcast: tf.Tensor
+    backcast: tf.Tensor.
         Seasonality backcast, 2-dimensional tensor with shape (N, t) where N is the batch size and
         t is the length of the lookback period.
 
-    forecast: tf.Tensor
+    forecast: tf.Tensor.
         Seasonality forecast, 2-dimensional tensor with shape (N, H) where N is the batch size and
         H is the length of the forecast period.
     '''
@@ -211,18 +211,18 @@ def generic_block(h, p, t_b, t_f, share_theta):
 
     Parameters:
     __________________________________
-    h: tf.Tensor
+    h: tf.Tensor.
         Output of 4-layer fully connected stack, 2-dimensional tensor with shape (N, k) where
         N is the batch size and k is the number of hidden units of each fully connected layer.
         Note that all fully connected layers have the same number of units.
 
-    p: int
+    p: int.
         Number of linear terms.
 
-    t_b: tf.Tensor
+    t_b: tf.Tensor.
         Input time index, 1-dimensional tensor with length t used for generating the backcast.
 
-    t_f: tf.Tensor
+    t_f: tf.Tensor.
         Output time index, 1-dimensional tensor with length H used for generating the forecast.
 
     share_theta: bool.
@@ -231,11 +231,11 @@ def generic_block(h, p, t_b, t_f, share_theta):
 
     Returns:
     __________________________________
-    backcast: tf.Tensor
+    backcast: tf.Tensor.
         Generic backcast, 2-dimensional tensor with shape (N, t) where N is the batch size and
         t is the length of the lookback period.
 
-    forecast: tf.Tensor
+    forecast: tf.Tensor.
         Generic forecast, 2-dimensional tensor with shape (N, H) where N is the batch size and
         H is the length of the forecast period.
     '''

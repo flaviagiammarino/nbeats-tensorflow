@@ -89,7 +89,7 @@ class NBeats():
         # Extract the time indices of the input and output sequences.
         backcast_time_idx, forecast_time_idx = get_time_indices(lookback_period, forecast_period)
 
-        # Build the model graph.
+        # Build the model.
         self.model = build_fn(
             backcast_time_idx,
             forecast_time_idx,
@@ -116,7 +116,7 @@ class NBeats():
 
         Parameters:
         __________________________________
-        loss: str, tf.function.
+        loss: str, function.
             Loss function, see https://www.tensorflow.org/api_docs/python/tf/keras/losses.
 
         learning_rate: float.
@@ -173,7 +173,7 @@ class NBeats():
 
         Returns:
         __________________________________
-        predictions: pd.DataFrame
+        predictions: pd.DataFrame.
             Data frame including the actual and predicted values of the time series.
         '''
 
@@ -218,7 +218,7 @@ class NBeats():
 
         Returns:
         __________________________________
-        forecasts: pd.DataFrame
+        forecasts: pd.DataFrame.
             Data frame including the actual and predicted values of the time series.
         '''
 
@@ -252,7 +252,7 @@ class NBeats():
 
         Returns:
         __________________________________
-        go.Figure
+        go.Figure.
         '''
 
         return plot(self.predictions)
@@ -264,7 +264,7 @@ class NBeats():
 
         Returns:
         __________________________________
-        go.Figure
+        go.Figure.
         '''
 
         return plot(self.forecasts)
@@ -292,10 +292,10 @@ def get_block_output(stack_type,
         N is the batch size and k is the number of hidden units of each fully connected layer.
         Note that all fully connected layers have the same number of units.
 
-    backcast_time_idx: tf.Tensor
+    backcast_time_idx: tf.Tensor.
         Input time index, 1-dimensional tensor with length t used for generating the backcast.
 
-    forecast_time_idx: tf.Tensor
+    forecast_time_idx: tf.Tensor.
         Output time index, 1-dimensional tensor with length H used for generating the forecast.
 
     num_trend_coefficients: int.
@@ -354,14 +354,14 @@ def build_fn(backcast_time_idx,
              share_coefficients):
 
     '''
-    Build the model graph.
+    Build the model.
 
     Parameters:
     __________________________________
-    backcast_time_idx: tf.Tensor
+    backcast_time_idx: tf.Tensor.
         Input time index, 1-dimensional tensor with length t used for generating the backcast.
 
-    forecast_time_idx: tf.Tensor
+    forecast_time_idx: tf.Tensor.
         Output time index, 1-dimensional tensor with length H used for generating the forecast.
 
     num_trend_coefficients: int.

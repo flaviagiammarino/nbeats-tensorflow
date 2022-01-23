@@ -46,22 +46,22 @@ def get_training_sequences(y, t, H):
 
     Parameters:
     __________________________________
-    y: np.array
+    y: np.array.
         Time series.
 
-    t: int
+    t: int.
         Length of input sequences (lookback period).
 
-    H: int
+    H: int.
         Length of output sequences (forecast period).
 
     Returns:
     __________________________________
-    X: np.array
+    X: np.array.
         Input sequences, 2-dimensional array with shape (N - t - H + 1, t) where N is the length
         of the time series.
 
-    Y: np.array
+    Y: np.array.
        Output sequences, 2-dimensional array with shape (N - t - H + 1, H) where N is the length
        of the time series.
     '''
@@ -96,18 +96,18 @@ def get_time_indices(t, H):
 
     Parameters:
     __________________________________
-    t: int
+    t: int.
         Length of input sequences (lookback period).
 
-    H: int
+    H: int.
         Length of output sequences (forecast period).
 
     Returns:
     __________________________________
-    t_b: tf.Tensor
+    t_b: tf.Tensor.
         Input time index, 1-dimensional tensor with length t used for backcasting.
 
-    t_f: tf.Tensor
+    t_f: tf.Tensor.
         Output time index, 1-dimensional tensor with length H used for forecasting.
     '''
 
