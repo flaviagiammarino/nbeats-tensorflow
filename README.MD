@@ -1,7 +1,7 @@
 # N-BEATS TensorFlow
 
-![license](https://img.shields.io/github/license/flaviagiammarino/nbeats-tensorflow?color=8250df)
-![languages](https://img.shields.io/github/languages/top/flaviagiammarino/nbeats-tensorflow?color=0550ae)
+![license](https://img.shields.io/github/license/flaviagiammarino/nbeats-tensorflow?color=9b72e5)
+![languages](https://img.shields.io/github/languages/top/flaviagiammarino/nbeats-tensorflow?color=3672BE)
 
 TensorFlow implementation of univariate time series forecasting model introduced in Oreshkin, B. N., Carpov, D., Chapados, N. and Bengio, Y., 2019. N-BEATS: Neural basis expansion analysis for interpretable time series forecasting. In *International Conference on Learning Representations*.
 [arXiv:1905.10437](https://arxiv.org/abs/1905.10437).
