@@ -5,7 +5,6 @@ pd.options.mode.chained_assignment = None
 
 from nbeats_tensorflow.utils import cast_target_to_array, get_training_sequences, get_time_indices
 from nbeats_tensorflow.blocks import trend_block, seasonality_block, generic_block
-from nbeats_tensorflow.plots import plot
 
 class NBeats():
 
