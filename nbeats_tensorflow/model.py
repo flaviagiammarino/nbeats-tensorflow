@@ -169,7 +169,7 @@ class NBeats():
 
         Returns:
         __________________________________
-        forecasts: pd.DataFrame.
+        df: pd.DataFrame.
             Data frame with the actual values of the time series, forecasts and backcasts.
         '''
 
