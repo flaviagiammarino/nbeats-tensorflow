@@ -1,9 +1,6 @@
 import pandas as pd
 import numpy as np
-from tensorflow.keras.layers import Input, Dense, Subtract, Add
-from tensorflow.keras.models import Model
-from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.callbacks import Callback
+import tensorflow as tf
 pd.options.mode.chained_assignment = None
 
 from nbeats_tensorflow.utils import cast_target_to_array, get_training_sequences, get_time_indices
@@ -27,8 +24,8 @@ class NBeats():
 
         '''
         Implementation of univariate time series forecasting model introduced in Oreshkin, B. N., Carpov, D.,
-        Chapados, N., & Bengio, Y. (2019). N-BEATS: Neural basis expansion analysis for interpretable time
-        series forecasting. https://arxiv.org/abs/1905.10437.
+        Chapados, N. and Bengio, Y., 2019. N-BEATS: Neural basis expansion analysis for interpretable time
+        series forecasting. In International Conference on Learning Representations.
 
         Parameters:
         __________________________________
@@ -144,7 +141,7 @@ class NBeats():
 
         # Compile the model.
         self.model.compile(
-            optimizer=Adam(learning_rate=learning_rate),
+            optimizer=tf.keras.optimizers.Adam(learning_rate=learning_rate),
             loss=[loss, loss],
             loss_weights=[backcast_loss_weight, 1 - backcast_loss_weight])
 
@@ -158,116 +155,48 @@ class NBeats():
             verbose=0,
             callbacks=[callback()] if verbose else None)
 
-    def predict(self, index, return_backcast=False):
+    def forecast(self, y, return_backcast=False):
 
         '''
-        Extract the in-sample predictions.
+        Generate the forecasts and backcasts.
 
         Parameters:
         __________________________________
-        index: int.
-            The start index of the sequence to predict.
-
+        y: np.array, pd.Series, list.
+            Time series.
+            
         return_backcast: bool.
-            True if the output should include the backcast, False otherwise.
-
-        Returns:
-        __________________________________
-        predictions: pd.DataFrame.
-            Data frame including the actual and predicted values of the time series.
-        '''
-
-        if index < self.lookback_period:
-            raise ValueError('The index must be greater than {}.'.format(self.lookback_period))
-
-        elif index > len(self.y) - self.forecast_period:
-            raise ValueError('The index must be less than {}.'.format(len(self.y) - self.forecast_period))
-
-        # Extract the predictions for the selected sequence.
-        backcast, forecast = self.model.predict(self.X)
-        backcast = self.y_min + (self.y_max - self.y_min) * backcast[index - self.lookback_period, :].flatten()
-        forecast = self.y_min + (self.y_max - self.y_min) * forecast[index - self.lookback_period, :].flatten()
-
-        # Organize the predictions in a data frame.
-        predictions = pd.DataFrame(columns=['time_idx', 'actual', 'forecast'])
-        predictions['time_idx'] = np.arange(len(self.y))
-        predictions['actual'] = self.y_min + (self.y_max - self.y_min) * self.y
-        predictions['forecast'].iloc[index: (index + self.forecast_period)] = forecast
-
-        if return_backcast:
-            predictions['backcast'] = np.nan
-            predictions['backcast'].iloc[(index - self.lookback_period): index] = backcast
-
-        predictions = predictions.astype(float)
-
-        # Save the data frame.
-        self.predictions = predictions
-
-        # Return the data frame.
-        return predictions
-
-    def forecast(self, return_backcast=False):
-
-        '''
-        Generate the out-of-sample forecasts.
-
-        Parameters:
-        __________________________________
-        return_backcast: bool.
-            True if the output should include the backcast, False otherwise.
+            True if the output should include the backcasts, False otherwise.
 
         Returns:
         __________________________________
         forecasts: pd.DataFrame.
-            Data frame including the actual and predicted values of the time series.
+            Data frame with the actual values of the time series, forecasts and backcasts.
         '''
 
-        # Generate the forecasts.
-        backcast, forecast = self.model.predict(self.y[- self.lookback_period:].reshape(1, - 1))
-        backcast = self.y_min + (self.y_max - self.y_min) * backcast[- 1, :].flatten()
-        forecast = self.y_min + (self.y_max - self.y_min) * forecast[- 1, :].flatten()
+        # Cast the data to numpy array.
+        y = cast_target_to_array(y)
 
-        # Organize the forecasts in a data frame.
-        forecasts = pd.DataFrame(columns=['time_idx', 'actual', 'forecast'])
-        forecasts['time_idx'] = np.arange(len(self.y) + self.forecast_period)
-        forecasts['actual'].iloc[: - self.forecast_period] = self.y_min + (self.y_max - self.y_min) * self.y
-        forecasts['forecast'].iloc[- self.forecast_period:] = forecast
+        # Scale the data.
+        y = (y - self.y_min) / (self.y_max - self.y_min)
+        
+        # Generate the forecasts and backcasts.
+        backcast, forecast = self.model(y[- self.lookback_period:].reshape(1, - 1))
+        backcast = self.y_min + (self.y_max - self.y_min) * backcast[- 1, :].numpy().flatten()
+        forecast = self.y_min + (self.y_max - self.y_min) * forecast[- 1, :].numpy().flatten()
+
+        # Organize the forecasts and backcasts in a data frame.
+        df = pd.DataFrame(columns=['time_idx', 'actual', 'forecast'])
+        df['time_idx'] = np.arange(len(self.y) + self.forecast_period)
+        df['actual'].iloc[: - self.forecast_period] = self.y_min + (self.y_max - self.y_min) * self.y
+        df['forecast'].iloc[- self.forecast_period:] = forecast
 
         if return_backcast:
-            forecasts['backcast'] = np.nan
-            forecasts['backcast'].iloc[- (self.lookback_period + self.forecast_period): - self.forecast_period] = backcast
-
-        forecasts = forecasts.astype(float)
-
-        # Save the data frame.
-        self.forecasts = forecasts
+            df['backcast'] = np.nan
+            df['backcast'].iloc[- (self.lookback_period + self.forecast_period): - self.forecast_period] = backcast
 
         # Return the data frame.
-        return forecasts
-
-    def plot_predictions(self):
-
-        '''
-        Plot the in-sample predictions.
-
-        Returns:
-        __________________________________
-        go.Figure.
-        '''
-
-        return plot(self.predictions)
-
-    def plot_forecasts(self):
-
-        '''
-        Plot the out-of-sample forecasts.
-
-        Returns:
-        __________________________________
-        go.Figure.
-        '''
-
-        return plot(self.forecasts)
+        return df.astype(float)
 
 
 def get_block_output(stack_type,
@@ -394,7 +323,7 @@ def build_fn(backcast_time_idx,
 
     # Define the model input, the input shape is
     # equal to the length of the lookback period.
-    x = Input(shape=len(backcast_time_idx))
+    x = tf.keras.layers.Input(shape=len(backcast_time_idx))
 
     # Loop across the different stacks.
     for s in range(len(stacks)):
@@ -403,10 +332,10 @@ def build_fn(backcast_time_idx,
         # layers across all blocks in the stack.
         if share_weights:
 
-            d1 = Dense(units=units, activation='relu')
-            d2 = Dense(units=units, activation='relu')
-            d3 = Dense(units=units, activation='relu')
-            d4 = Dense(units=units, activation='relu')
+            d1 = tf.keras.layers.Dense(units=units, activation='relu')
+            d2 = tf.keras.layers.Dense(units=units, activation='relu')
+            d3 = tf.keras.layers.Dense(units=units, activation='relu')
+            d4 = tf.keras.layers.Dense(units=units, activation='relu')
 
         # Loop across the different blocks in the stack.
         for b in range(num_blocks_per_stack):
@@ -424,10 +353,10 @@ def build_fn(backcast_time_idx,
 
                 else:
 
-                    h = Dense(units=units, activation='relu')(x)
-                    h = Dense(units=units, activation='relu')(h)
-                    h = Dense(units=units, activation='relu')(h)
-                    h = Dense(units=units, activation='relu')(h)
+                    h = tf.keras.layers.Dense(units=units, activation='relu')(x)
+                    h = tf.keras.layers.Dense(units=units, activation='relu')(h)
+                    h = tf.keras.layers.Dense(units=units, activation='relu')(h)
+                    h = tf.keras.layers.Dense(units=units, activation='relu')(h)
 
                 # Generate the block backcast and forecast.
                 backcast_block, forecast_block = get_block_output(
@@ -442,7 +371,7 @@ def build_fn(backcast_time_idx,
 
                 # Calculate the backcast residual by subtracting the block backcast from the input.
                 # See Section 3.2 in the N-BEATS paper.
-                backcast = Subtract()([x, backcast_block])
+                backcast = tf.keras.layers.Subtract()([x, backcast_block])
 
                 # For the first block of the first stack, no adjustment is applied to the forecast.
                 forecast = forecast_block
@@ -460,10 +389,10 @@ def build_fn(backcast_time_idx,
 
                 else:
 
-                    h = Dense(units=units, activation='relu')(backcast)
-                    h = Dense(units=units, activation='relu')(h)
-                    h = Dense(units=units, activation='relu')(h)
-                    h = Dense(units=units, activation='relu')(h)
+                    h = tf.keras.layers.Dense(units=units, activation='relu')(backcast)
+                    h = tf.keras.layers.Dense(units=units, activation='relu')(h)
+                    h = tf.keras.layers.Dense(units=units, activation='relu')(h)
+                    h = tf.keras.layers.Dense(units=units, activation='relu')(h)
 
                 # Generate the block backcast and forecast.
                 backcast_block, forecast_block = get_block_output(
@@ -478,16 +407,16 @@ def build_fn(backcast_time_idx,
 
                 # Substract the current block backcast from the previous block backcast.
                 # See Section 3.2 in the N-BEATS paper.
-                backcast = Subtract()([backcast, backcast_block])
+                backcast = tf.keras.layers.Subtract()([backcast, backcast_block])
 
                 # Add the current block forecast to the previous block forecast.
                 # See Section 3.2 in the N-BEATS paper.
-                forecast = Add()([forecast, forecast_block])
+                forecast = tf.keras.layers.Add()([forecast, forecast_block])
 
-    return Model(x, [backcast, forecast])
+    return tf.keras.models.Model(x, [backcast, forecast])
 
 
-class callback(Callback):
+class callback(tf.keras.callbacks.Callback):
     def on_epoch_end(self, epoch, logs=None):
         if 'val_loss' in logs.keys():
             print('epoch: {}, loss: {:,.6f}, val_loss: {:,.6f}'.format(1 + epoch, logs['loss'], logs['val_loss']))

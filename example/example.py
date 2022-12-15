@@ -1,5 +1,7 @@
 import numpy as np
+
 from nbeats_tensorflow.model import NBeats
+from nbeats_tensorflow.plots import plot
 
 # Generate a time series
 N = 1000
@@ -32,12 +34,9 @@ model.fit(
     verbose=True
 )
 
-# Plot the in-sample predictions
-predictions = model.predict(index=800, return_backcast=True)
-fig = model.plot_predictions()
-fig.write_image('predictions.png', width=650, height=400)
+# Generate the forecasts and backcasts
+df = model.forecast(y=y, return_backcast=True)
 
-# Plot the out-of-sample forecasts
-forecasts = model.forecast(return_backcast=True)
-fig = model.plot_forecasts()
-fig.write_image('forecasts.png', width=650, height=400)
+# Plot the forecasts and backcasts
+fig = plot(df=df)
+fig.write_image('results.png', scale=4, width=700, height=400)

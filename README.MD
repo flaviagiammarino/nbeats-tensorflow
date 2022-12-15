@@ -4,21 +4,22 @@
 ![languages](https://img.shields.io/github/languages/top/flaviagiammarino/nbeats-tensorflow)
 
 TensorFlow implementation of univariate time series forecasting model introduced in Oreshkin, B. N., Carpov, D., Chapados, N. and Bengio, Y., 2019. N-BEATS: Neural basis expansion analysis for interpretable time series forecasting. In *International Conference on Learning Representations*.
-[arXiv:1905.10437](https://arxiv.org/abs/1905.10437).
 
 ## Dependencies
 ```bash
-pandas==1.3.4
-numpy==1.19.5
-tensorflow==2.7.0
-plotly==5.3.1
+pandas==1.5.2
+numpy==1.23.5
+tensorflow==2.11.0
+plotly==5.11.0
 kaleido==0.2.1
 ```
 
 ## Usage
 ```python
 import numpy as np
+
 from nbeats_tensorflow.model import NBeats
+from nbeats_tensorflow.plots import plot
 
 # Generate a time series
 N = 1000
@@ -51,11 +52,11 @@ model.fit(
     verbose=True
 )
 
-# Generate the forecasts
-forecasts = model.forecast(return_backcast=True)
+# Generate the forecasts and backcasts
+df = model.forecast(y=y, return_backcast=True)
 
-# Plot the forecasts
-fig = model.plot_forecasts()
-fig.write_image('forecasts.png', width=650, height=400)
+# Plot the forecasts and backcasts
+fig = plot(df=df)
+fig.write_image('results.png', scale=4, width=700, height=400)
 ```
-![forecasts](example/forecasts.png)
+![results](example/results.png)

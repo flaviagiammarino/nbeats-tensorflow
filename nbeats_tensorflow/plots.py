@@ -3,17 +3,17 @@ import plotly.graph_objects as go
 def plot(df):
 
     '''
-    Plot the actual and predicted values.
+    Plot the actual values of the time series together with the forecasts and backcasts.
 
     Parameters:
     __________________________________
     df: pd.DataFrame.
-        Data frame with actual and predicted values.
+        Data frame with the actual values of the time series, forecasts and backcasts.
 
     Returns:
     __________________________________
     fig: go.Figure.
-        Line chart of actual and predicted values.
+        Line chart of the actual values of the time series, forecasts and backcasts.
     '''
 
     layout = dict(
@@ -21,31 +21,34 @@ def plot(df):
         paper_bgcolor='white',
         margin=dict(t=10, b=10, l=10, r=10),
         font=dict(
-            color='#000000',
-            size=10,
+            color='#1b1f24',
+            size=8,
         ),
         legend=dict(
             font=dict(
-                color='#000000',
+                color='#1b1f24',
+                size=10,
             ),
         ),
         xaxis=dict(
             title='Time',
-            color='#000000',
+            color='#424a53',
             tickfont=dict(
-                color='#3a3a3a',
+                color='#6e7781',
+                size=6,
             ),
-            linecolor='#d9d9d9',
+            linecolor='#eaeef2',
             mirror=True,
             showgrid=False,
         ),
         yaxis=dict(
             title='Value',
-            color='#000000',
+            color='#424a53',
             tickfont=dict(
-                color='#3a3a3a',
+                color='#6e7781',
+                size=6,
             ),
-            linecolor='#d9d9d9',
+            linecolor='#eaeef2',
             mirror=True,
             showgrid=False,
             zeroline=False,
@@ -61,7 +64,7 @@ def plot(df):
             name='Actual',
             mode='lines',
             line=dict(
-                color='#b3b3b3',
+                color='#afb8c1',
                 width=1
             )
         )
@@ -74,7 +77,7 @@ def plot(df):
             name='Forecast',
             mode='lines',
             line=dict(
-                color='#0550ae',
+                color='#0969da',
                 width=1
             )
         )

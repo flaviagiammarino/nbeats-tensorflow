@@ -1,6 +1,5 @@
 import numpy as np
 import tensorflow as tf
-from tensorflow.keras.layers import Dense, Lambda
 
 def trend_model(theta, t_, p):
 
@@ -118,24 +117,24 @@ def trend_block(h, p, t_b, t_f, share_theta):
 
         # If share_theta is true, use the same basis expansion
         # coefficients for backcasting and forecasting.
-        theta = Dense(units=p, activation='linear', use_bias=False)(h)
+        theta = tf.keras.layers.Dense(units=p, activation='linear', use_bias=False)(h)
 
         # Obtain the backcast and forecast as the dot product of their common
         # basis expansion coefficients and of the matrix of polynomial terms.
-        backcast = Lambda(function=trend_model, arguments={'p': p, 't_': t_b})(theta)
-        forecast = Lambda(function=trend_model, arguments={'p': p, 't_': t_f})(theta)
+        backcast = tf.keras.layers.Lambda(function=trend_model, arguments={'p': p, 't_': t_b})(theta)
+        forecast = tf.keras.layers.Lambda(function=trend_model, arguments={'p': p, 't_': t_f})(theta)
 
     else:
 
         # If share_theta is false, use different basis expansion
         # coefficients for backcasting and forecasting.
-        theta_b = Dense(units=p, activation='linear', use_bias=False)(h)
-        theta_f = Dense(units=p, activation='linear', use_bias=False)(h)
+        theta_b = tf.keras.layers.Dense(units=p, activation='linear', use_bias=False)(h)
+        theta_f = tf.keras.layers.Dense(units=p, activation='linear', use_bias=False)(h)
 
         # Obtain the backcast and forecast as the dot product of their respective
         # basis expansion coefficients and of the matrix of polynomial terms.
-        backcast = Lambda(function=trend_model, arguments={'p': p, 't_': t_b})(theta_b)
-        forecast = Lambda(function=trend_model, arguments={'p': p, 't_': t_f})(theta_f)
+        backcast = tf.keras.layers.Lambda(function=trend_model, arguments={'p': p, 't_': t_b})(theta_b)
+        forecast = tf.keras.layers.Lambda(function=trend_model, arguments={'p': p, 't_': t_f})(theta_f)
 
     return backcast, forecast
 
@@ -181,24 +180,24 @@ def seasonality_block(h, p, t_b, t_f, share_theta):
 
         # If share_theta is true, use the same basis expansion
         # coefficients for backcasting and forecasting.
-        theta = Dense(units=2 * p, activation='linear', use_bias=False)(h)
+        theta = tf.keras.layers.Dense(units=2 * p, activation='linear', use_bias=False)(h)
 
         # Obtain the backcast and forecast as the dot product of their common
         # basis expansion coefficients and of the matrix of Fourier terms.
-        backcast = Lambda(function=seasonality_model, arguments={'p': p, 't_': t_b})(theta)
-        forecast = Lambda(function=seasonality_model, arguments={'p': p, 't_': t_f})(theta)
+        backcast = tf.keras.layers.Lambda(function=seasonality_model, arguments={'p': p, 't_': t_b})(theta)
+        forecast = tf.keras.layers.Lambda(function=seasonality_model, arguments={'p': p, 't_': t_f})(theta)
 
     else:
 
         # If share_theta is false, use different basis expansion
         # coefficients for backcasting and forecasting.
-        theta_b = Dense(units=2 * p, activation='linear', use_bias=False)(h)
-        theta_f = Dense(units=2 * p, activation='linear', use_bias=False)(h)
+        theta_b = tf.keras.layers.Dense(units=2 * p, activation='linear', use_bias=False)(h)
+        theta_f = tf.keras.layers.Dense(units=2 * p, activation='linear', use_bias=False)(h)
 
         # Obtain the backcast and forecast as the dot product of their respective
         # basis expansion coefficients and of the matrix of Fourier terms.
-        backcast = Lambda(function=seasonality_model, arguments={'p': p, 't_': t_b})(theta_b)
-        forecast = Lambda(function=seasonality_model, arguments={'p': p, 't_': t_f})(theta_f)
+        backcast = tf.keras.layers.Lambda(function=seasonality_model, arguments={'p': p, 't_': t_b})(theta_b)
+        forecast = tf.keras.layers.Lambda(function=seasonality_model, arguments={'p': p, 't_': t_f})(theta_f)
 
     return backcast, forecast
 
@@ -244,23 +243,23 @@ def generic_block(h, p, t_b, t_f, share_theta):
 
         # If share_theta is true, use the same basis expansion
         # coefficients for backcasting and forecasting.
-        theta = Dense(units=p, activation='linear', use_bias=False)(h)
+        theta = tf.keras.layers.Dense(units=p, activation='linear', use_bias=False)(h)
 
         # Obtain the backcast and forecast as a linear function of
         # their common basis expansion coefficients.
-        backcast = Dense(units=len(t_b), activation='linear')(theta)
-        forecast = Dense(units=len(t_f), activation='linear')(theta)
+        backcast = tf.keras.layers.Dense(units=len(t_b), activation='linear')(theta)
+        forecast = tf.keras.layers.Dense(units=len(t_f), activation='linear')(theta)
 
     else:
 
         # If share_theta is false, use different basis expansion
         # coefficients for backcasting and forecasting.
-        theta_b = Dense(units=p, activation='linear', use_bias=False)(h)
-        theta_f = Dense(units=p, activation='linear', use_bias=False)(h)
+        theta_b = tf.keras.layers.Dense(units=p, activation='linear', use_bias=False)(h)
+        theta_f = tf.keras.layers.Dense(units=p, activation='linear', use_bias=False)(h)
 
         # Obtain the backcast and forecast as a linear function of
         # their respective basis expansion coefficients.
-        backcast = Dense(units=len(t_b), activation='linear')(theta_b)
-        forecast = Dense(units=len(t_f), activation='linear')(theta_f)
+        backcast = tf.keras.layers.Dense(units=len(t_b), activation='linear')(theta_b)
+        forecast = tf.keras.layers.Dense(units=len(t_f), activation='linear')(theta_f)
 
     return backcast, forecast
