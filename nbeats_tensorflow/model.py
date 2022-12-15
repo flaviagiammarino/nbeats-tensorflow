@@ -162,7 +162,7 @@ class NBeats():
         Parameters:
         __________________________________
         y: np.array, pd.Series, list.
-            Time series.
+            Past values of the time series.
             
         return_backcast: bool.
             True if the output should include the backcasts, False otherwise.
