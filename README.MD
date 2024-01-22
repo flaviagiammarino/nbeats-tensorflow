@@ -10,7 +10,7 @@ N-BEATS: Neural basis expansion analysis for interpretable time series forecasti
 
 <img src=diagram.png style="width:80%;margin-top:30px;margin-bottom:30px"/>
 
-*Model architecture (source: [doi: 10.48550/arXiv.1905.10437](https://doi.org/10.48550/arXiv.1905.10437))*
+*Model architecture (source: [ICLR 2020](https://openreview.net/forum?id=r1ecqn4YwB))*
 
 ## Dependencies
 ```bash
