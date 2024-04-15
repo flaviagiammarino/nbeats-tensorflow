@@ -8,10 +8,6 @@
 TensorFlow implementation of univariate time series forecasting model introduced in Oreshkin, B. N., Carpov, D., Chapados, N. and Bengio, Y., 2019. 
 N-BEATS: Neural basis expansion analysis for interpretable time series forecasting. In *International Conference on Learning Representations*.
 
-<img src=diagram.png style="width:80%;margin-top:30px;margin-bottom:30px"/>
-
-*Model architecture (source: [ICLR 2020](https://openreview.net/forum?id=r1ecqn4YwB))*
-
 ## Dependencies
 ```bash
 pandas==1.5.2
