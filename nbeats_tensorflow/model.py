@@ -322,7 +322,7 @@ def build_fn(backcast_time_idx,
 
     # Define the model input, the input shape is
     # equal to the length of the lookback period.
-    x = tf.keras.layers.Input(shape=len(backcast_time_idx))
+    x = tf.keras.layers.Input(shape=(len(backcast_time_idx),))
 
     # Loop across the different stacks.
     for s in range(len(stacks)):
